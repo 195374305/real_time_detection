@@ -7,12 +7,14 @@ from PIL import Image
 # PyTorch Hub
 import torch
 
-#model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
-model = torch.hub.load('.', 'custom','yolov5n.pt', source='local')
+#model = torch.hub.load('ultralytics/yolov5', 'yolov5s')  #可用
+
+model = torch.hub.load('.', 'custom','yolov5s.pt', source='local')  #yolov5s.pt为本地模型  
+
 #model = torch.hub.load('.', 'custom','yolov5x-cls.pt', source='local',force_reload=True)
 
 
-bounding_box = {'top': 400, 'left': 200, 'width': 800, 'height': 600}
+bounding_box = {'top': 400, 'left': 200, 'width': 1024, 'height':576}   #分辨率必需严格遵从网络模型大小，只可大于模型不能小余模型
 sct = mss()
 number = 0
 while True:
