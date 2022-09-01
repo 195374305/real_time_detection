@@ -6,15 +6,17 @@ from mss import mss
 from PIL import Image
 # PyTorch Hub
 import torch
+import pandas as pd
+import pyautogui
 
-#model = torch.hub.load('ultralytics/yolov5', 'yolov5s')  #可用
+# model = torch.hub.load('ultralytics/yolov5', 'yolov5s')  #可用
 
-model = torch.hub.load('.', 'custom','yolov5s.pt', source='local')  #yolov5s.pt为本地模型  
+model = torch.hub.load('.', 'custom', 'yolov5s.pt', source='local')
 
-#model = torch.hub.load('.', 'custom','yolov5x-cls.pt', source='local',force_reload=True)
+# model = torch.hub.load('.', 'custom','yolov5x.pt', source='local',force_reload=True)
 
 
-bounding_box = {'top': 400, 'left': 200, 'width': 1024, 'height':576}   #分辨率必需严格遵从网络模型大小，只可大于模型不能小余模型
+bounding_box = {'top': 0, 'left': 0, 'width': 850, 'height': 700}
 sct = mss()
 number = 0
 while True:
@@ -26,10 +28,20 @@ while True:
     results = model(scr_img)
     results.render()  # updates results.imgs with boxes and labels
 
+    cv.imshow('testing', results.ims[0])
 
-    for im in results.ims:
-        cv.imshow('testing', im)
+    df = pd.DataFrame(results.pandas().xywh[0])  # 把list转换成DATAframe
 
-    if (cv2.waitKey(1) & 0xFF)==ord('q'):
+    # for i in df.index:
+    #     print('索引：', i, '横坐标：', df.xcenter[i], '中坐标', df.ycenter[i], '名字', df.name[i])
+
+    if df.empty != True:
+        for i in df.index:
+            if df.name[i] == 'person':
+              pyautogui.moveTo(df.xcenter[0], df.ycenter[0])  # 定位到识别的第一个单位
+
+
+
+    if (cv2.waitKey(1) & 0xFF) == ord('q'):
         cv2.destroyAllWindows()
         break
